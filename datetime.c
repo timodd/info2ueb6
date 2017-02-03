@@ -9,8 +9,7 @@
 
 void printDate (TDate date)
 {
-   printf ("%02d.%02d.%04d:\n", date.Day, date.Month, date.Year);
-   printLine ('-', 15);
+   printf ("%02d.%02d.%04d", date.Day, date.Month, date.Year);
 }
 void printTime (TTime time)
 {
@@ -20,7 +19,7 @@ void printTime (TTime time)
 void getDate (char prompt[], TDate *d)
 {
    int isDate;
-   char Input[20];
+   char *Input = calloc(11, sizeof(char));
    do
    {
       *Input = '\0';
@@ -102,14 +101,14 @@ void getTime (char prompt[], TTime *time)
 void getDuration (char prompt[], TTime *time)
 {
 //   int isTime = 0;
-   char Input[20];
+   char Input[12];
    time -> Hour = 0;
    time -> Minute = 0;
    *Input = '\0';
    STORE_POS;
    CLEAR_LINE;
    printf ("%s", prompt);
-   scanf ("%19[^\n]", Input);
+   scanf ("%11[^\n]", Input);
    clearBuffer();
    if (*Input)
    {

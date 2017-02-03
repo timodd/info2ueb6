@@ -14,7 +14,7 @@ void saveAppointment(FILE *d, TAppointment *App)
    fprintf (d, "  <Description>%s</Description>\n", App->Description);
    if (App->Location)
       fprintf (d, "  <Location>%s</Location>\n", App->Location);
-   if (App->Duration && (App->Duration->Hour||App->Duration->Minute))
+   if (App->Duration && (App->Duration->Hour || App->Duration->Minute))
       fprintf (d, "  <Duration>%02d:%02d</Duration>\n", App->Duration->Hour, App->Duration->Minute);
    fprintf (d, " </Appointment>\n");
 }
@@ -36,7 +36,7 @@ void loadAppointment(FILE *d, char l[])
 {
    int len = 0;
    char *pos;
-   TAppointment *New = First;
+   TAppointment *New = calloc(1, sizeof(TAppointment));
    resetAppointment(New);
    do
    {
@@ -88,11 +88,11 @@ void loadAppointment(FILE *d, char l[])
          break;
    }
    while(strncmp (l, " </Appointment>", 15) != 0);
-   New++;
+   insertInDList(New);
+//   New++; /**TODO**/
 }
 int saveCalendar()
 {
-   int i;
    FILE *dat = fopen (filename, "wt");
    if (dat == NULL)
    {
@@ -101,16 +101,23 @@ int saveCalendar()
    }
    else
    {
-      printf ("\nTermine gespeichert \n");
-      fprintf (dat, "<Calendar>\n");
-      for (i = 0; i < countAppointments; i++)
+      TAppointment *tmp = First;
+      if (tmp)
       {
-         saveAppointment (dat, New->next);
+         while(tmp)
+         {
+            fprintf (dat, "<Calendar>\n");
+            saveAppointment (dat, First);
+            tmp = tmp->next;
+            fprintf (dat, "</Calendar>\n");
+            fclose (dat);
+            printf ("\nTermine gespeichert \n");
+         }
       }
-      fprintf (dat, "</Calendar>\n");
-      fclose (dat);
-      return 1;
+      else
+         printf("\nkeine Termine zum Speichern vorhanden\n");
    }
+   return 1;
 }
 int loadCalendar()
 {

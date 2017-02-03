@@ -42,7 +42,6 @@ void clearScreen()
 {
    HOME;
    CLEAR;
-//use function system from stdlib.h eg. system("CLS") ****NUR WINDOWS??
 }
 
 //user input j/n if program restarts

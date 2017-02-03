@@ -9,6 +9,7 @@
 #include "escapesequenzen.h"
 #include "database.h"
 #include "sort.h"
+#include "list.h"
 
 /*
 calendar
@@ -42,15 +43,8 @@ TAppointment *Last = NULL;
 
 void createAppointment()
 {
-   TAppointment *App = First;
-   App->Description = calloc(101, sizeof(char));
-   App->Location = calloc(16, sizeof(char));
+   TAppointment *App = calloc(1, sizeof(TAppointment));
    App->Duration = calloc(1, sizeof(TTime));
-   App->Time.Hour = -1;
-   App->Time.Minute = -1;
-   App->Date.Day = -1;
-   App->Date.Month = -1;
-   App->Date.Year = -1;
    App->next = NULL;
    App->prev = NULL;
 
@@ -82,13 +76,14 @@ void createAppointment()
    UP(1);
    CLEAR_LINE;
    if (App->Location)
-   printf("%s%s", points[3], App->Location);
+      printf("%s%s", points[3], App->Location);
    else
-   printf("%s ", points[3]);
+      printf("%s ", points[3]);
    POSITION(8, 0);
    CLEAR_LINE;
    getDuration(points[4], App->Duration);
-   App->idx++;
+   insertInDList(App);
+//   App->idx++;
    POSITION(10, 0);
    CLEAR_LINE;
    printf("Termin wurde gespeichert");
@@ -103,8 +98,35 @@ void editAppointment()
 
 void deleteAppointment()
 {
-   printf("Termin löschen");
-   waitForEnter();
+   TAppointment *tmp = First;
+   int c = -1, l = 0, i;
+   char *title = "Termin löschen";
+   getSubMenu(title);
+   l = printDelList();
+   printf("\nWelchen Termin möchten Sie löschen (0 für Abbrechen) : ");
+   STORE_POS;
+   do
+   {
+      RESTORE_POS;
+      CLEAR_LINE;
+      scanf("%i", &c);
+      clearBuffer();
+   } while (c < 0 || c > l);
+   if (c != 0)
+   {
+      i = c;
+      while (--c > 0)
+         tmp = tmp->next;
+      tmp = removeFromDList(tmp);
+      if (tmp)
+      {
+         freeAppointment(tmp);
+         printf("\n%d. Termin gelöscht", i);
+      }
+      else
+         printf("\n%d. Termin nicht gefunden", i);
+      waitForEnter();
+   }
 }
 
 void searchAppointment()
@@ -113,6 +135,34 @@ void searchAppointment()
    waitForEnter();
 }
 
+int printDelList()
+{
+   int i = 0;
+   char *wday[7] = {"So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
+   TAppointment *tmp;
+   tmp = First;
+   while (tmp)
+   {
+      int index = tmp -> Date.Weekday;
+      printf("%i. %s, ", i + 1, wday[index]);
+      printDate(tmp -> Date);
+      printf(", ");
+      printTime(tmp -> Time);
+      printf(": ");
+
+      if (strlen(tmp->Description) < 46)
+         printf(" %s\n", tmp -> Description);
+      else
+      {
+         char cut[44] = {' '};
+         strncpy(cut, tmp->Description, 43);
+         printf(" %s...\n", cut);
+      }
+      tmp = tmp->next;
+      i++;
+   }
+   return i;
+}
 
 
 
@@ -130,16 +180,18 @@ void printAppointment(TAppointment *App)
    int i, index = App -> Date.Weekday;
    int fillspace = maxlen_place;
    if (App->Location)
-      fillspace= maxlen_place - strlen(App->Location);
+      fillspace = maxlen_place - strlen(App->Location);
    if ((App - 1) -> Date.Day) //if not first Appointment
    {
-      TDate tmp = (App - 1) -> Date;
+      TDate tmp = (App -> prev) -> Date;
       if (tmp.Day != App -> Date.Day || tmp.Month != App -> Date.Month || tmp.Year != App -> Date.Year) //if new date
       {
          printf("\n");
          printLine('=', 80);
          printf("%s, ", wday[index]);
          printDate(App -> Date);
+         printf(":\n");
+         printLine ('-', 15);
       }
    }
    else // if first date
@@ -148,6 +200,8 @@ void printAppointment(TAppointment *App)
       printLine('=', 80);
       printf("%s, ", wday[index]);
       printDate(App -> Date);
+      printf(":\n");
+      printLine ('-', 15);
    }
    printTime(App -> Time);
    if (App->Duration && (App->Duration->Hour || App->Duration->Minute))
@@ -169,23 +223,25 @@ void printAppointment(TAppointment *App)
    else
    {
       char tmp[44] = {' '};
-      strncpy(tmp,App->Description, 43);
+      strncpy(tmp, App->Description, 43);
       printf(" | %s...\n", tmp);
    }
 }
 
 void listCalendar()
 {
-   int i;
+   TAppointment *tmp = First;
+   int n = 0;
    char *title = "Termine auflisten";
-   CLEAR;
    getSubMenu(title);
-   if (First->idx == 0)
-      printf("\n\nnoch keine Termine vorhanden\n");
-   for (i = 0; i < First->idx; i++)
+   while(tmp)
    {
-      printAppointment(First->next);
+      printAppointment(tmp);
+      tmp = tmp->next;
+      n++;
    }
+   if (n == 0)
+      printf("\n\nnoch keine Termine vorhanden\n");
    waitForEnter();
 }
 
@@ -194,14 +250,19 @@ void freeAppointment(TAppointment *App)
    free((App)->Duration);
    free((App)->Location);
    free((App)->Description);
+   free(App);
 }
 
 void freeCalendar()
 {
-   int i;
-   for (i = 0; i < First->idx; i++)
+   TAppointment *tmp = First;
+   while(tmp)
    {
-      freeAppointment(First->next);
+      First = tmp->next;
+      if (First == NULL)
+         Last = NULL;
+      freeAppointment(tmp);
+      tmp = First;
    }
 }
 
@@ -233,6 +294,18 @@ int cmpDatTim(TAppointment *A1, TAppointment *A2)
       erg = cmpTim(A1, A2);
    return erg;
 }
+int cmpApp(TAppointment *A1, TAppointment *A2)
+{
+   int erg = 0;
+   erg = cmpDat(A1, A2);
+   if (erg == 0)
+      erg = cmpTim(A1, A2);
+   if (erg == 0)
+      erg = cmpLoc(A1,A2);
+   if (erg == 0)
+      erg = cmpDes(A1,A2);
+   return erg;
+}
 
 int cmpDur(TAppointment *A1, TAppointment *A2)
 {
@@ -247,16 +320,16 @@ int cmpDur(TAppointment *A1, TAppointment *A2)
       if (erg == 0)
          erg = A1->Duration->Minute - A2->Duration->Minute;
    }
-      return erg;
+   return erg;
 }
 
 int cmpDes(TAppointment *A1, TAppointment *A2)
 {
    int erg = 0;
    if (A1->Description)
-      erg = strcmp(A1->Description,"");
+      erg = strcmp(A1->Description, "");
    if (A2->Description)
-      erg = -1*(strcmp(A2->Description,""));
+      erg = -1 * (strcmp(A2->Description, ""));
    if (A1->Description && A2->Description)
    {
       erg = strcmp(A1->Description, A2->Description);
@@ -268,9 +341,9 @@ int cmpLoc(TAppointment *A1, TAppointment *A2)
 {
    int erg = 0;
    if (A1->Location)
-      erg = strcmp(A1->Location,"");
+      erg = strcmp(A1->Location, "");
    if (A2->Location)
-      erg = -1*(strcmp(A2->Location,""));
+      erg = -1 * (strcmp(A2->Location, ""));
    if (A1->Location && A2->Location)
    {
       erg = strcmp(A1->Location, A2->Location);

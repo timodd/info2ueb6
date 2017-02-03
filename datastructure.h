@@ -18,7 +18,7 @@ typedef struct
 
 typedef struct sLE
 {
-   int idx;
+//   int idx;
    TDate Date;
    TTime Time;
    char *Description;
