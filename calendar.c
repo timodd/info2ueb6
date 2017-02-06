@@ -41,7 +41,7 @@ const int maxlen_description = 100, maxlen_place = 15;
 TAppointment *First = NULL;
 TAppointment *Last = NULL;
 
-void createAppointment()
+void createAppointment()/**TODO occational speicherzugriffsfehler**/
 {
    TAppointment *App = calloc(1, sizeof(TAppointment));
    App->Duration = calloc(1, sizeof(TTime));

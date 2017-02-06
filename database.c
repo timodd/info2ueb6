@@ -90,7 +90,7 @@ void loadAppointment(FILE *d, char l[])
    while(strncmp (l, " </Appointment>", 15) != 0);
    insertInDList(New);
 }
-int saveCalendar() /**TODO fuehrt zu speicherzugriffsfehlern **/
+int saveCalendar()
 {
    FILE *dat = fopen (filename, "wt");
    if (dat == NULL)
@@ -103,15 +103,17 @@ int saveCalendar() /**TODO fuehrt zu speicherzugriffsfehlern **/
       TAppointment *tmp = First;
       if (tmp)
       {
+            fprintf (dat, "<Calendar>\n");
          while(tmp)
          {
-            fprintf (dat, "<Calendar>\n");
-            saveAppointment (dat, First);
-            tmp = tmp->next;
+            saveAppointment (dat, tmp);
+            if (tmp->next)
+               tmp = tmp->next;
+            else break;
+         }
             fprintf (dat, "</Calendar>\n");
             fclose (dat);
             printf ("\nTermine gespeichert \n");
-         }
       }
       else
          printf("\nkeine Termine zum Speichern vorhanden\n");
