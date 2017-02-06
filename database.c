@@ -89,9 +89,8 @@ void loadAppointment(FILE *d, char l[])
    }
    while(strncmp (l, " </Appointment>", 15) != 0);
    insertInDList(New);
-//   New++; /**TODO**/
 }
-int saveCalendar()
+int saveCalendar() /**TODO fuehrt zu speicherzugriffsfehlern **/
 {
    FILE *dat = fopen (filename, "wt");
    if (dat == NULL)
