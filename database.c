@@ -4,6 +4,7 @@
 #include "datastructure.h"
 #include "calendar.h"
 #include "datetime.h"
+#include "list.h"
 
 char filename[] = "calend.xml";
 void saveAppointment(FILE *d, TAppointment *App)

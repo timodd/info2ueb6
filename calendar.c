@@ -41,7 +41,7 @@ const int maxlen_description = 100, maxlen_place = 15;
 TAppointment *First = NULL;
 TAppointment *Last = NULL;
 
-void createAppointment()/**TODO occational speicherzugriffsfehler**/
+void createAppointment()
 {
    TAppointment *App = calloc(1, sizeof(TAppointment));
    App->Duration = calloc(1, sizeof(TTime));
@@ -181,10 +181,10 @@ void printAppointment(TAppointment *App)
    int fillspace = maxlen_place;
    if (App->Location)
       fillspace = maxlen_place - strlen(App->Location);
-   if ((App - 1) -> Date.Day) //if not first Appointment
+   if (App->prev != NULL) //if not first Appointment
    {
       TDate tmp = (App -> prev) -> Date;
-      if (tmp.Day != App -> Date.Day || tmp.Month != App -> Date.Month || tmp.Year != App -> Date.Year) //if new date
+      if (tmp.Day != App -> Date.Day || tmp.Month != App -> Date.Month || tmp.Year != App -> Date.Year) //if diff to prev
       {
          printf("\n");
          printLine('=', 80);
