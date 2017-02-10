@@ -3,10 +3,9 @@
 #include "escapesequenzen.h"
 #include "tools.h"
 
-int getMenu(char *mt, char *mp[], int n) //menuetitle, menuepoints, number of points
+int printMenu(char *mt, char *mp[], int n) //menuetitle, menuepoints, number of points
 {
    int c = 0, p = 0;
-   //print menue on empty screen
    do
    {
       c = 0;
@@ -27,16 +26,9 @@ int getMenu(char *mt, char *mp[], int n) //menuetitle, menuepoints, number of po
    return c;
 }
 
-void getSubMenu(char *title/*, char *point[], int i*/)
+void printSubMenu(char *title)
 {
-//   int p = 0, valid = 0;
-   //print submenue on empty screen
       clearScreen();
       printf("%s\n",title);
       printLine('=', Strlen(title));
-//      do
-//      {
-//         printf("\n%s", point[p]);
-//         p++;
-//      } while(p < i);
 }

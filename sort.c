@@ -4,7 +4,6 @@
 /*
 funktionen:
 
-
 partit(int *, int, int, int(*)(int*, int*), int(*)(int *, int *))
 qsortt(int *,int, int(*)(int*, int*), int(*)(int *, int *))
 Quicksort(int *,int, int(*)(int*, int*), int(*)(int *, int *))
@@ -12,7 +11,7 @@ Quicksort(int *,int, int(*)(int*, int*), int(*)(int *, int *))
 */
 
 
-int partit(TAppointment *A, int ui, int oi, int(*compare)(TAppointment*, TAppointment*), int(*swp)(TAppointment *, TAppointment *))
+int partit (TAppointment *A, int ui, int oi, int(*compare)(TAppointment*, TAppointment*), int(*swp)(TAppointment *, TAppointment *))
 {
    int i = ui + 1, j = oi;
    TAppointment *comp = A + ui;
@@ -34,7 +33,7 @@ int partit(TAppointment *A, int ui, int oi, int(*compare)(TAppointment*, TAppoin
    return i;
 }
 
-void qsortt(TAppointment *A, int ui, int oi, int(*compare)(TAppointment*, TAppointment*), int(*swp)(TAppointment *, TAppointment *))
+void qsortt (TAppointment *A, int ui, int oi, int(*compare)(TAppointment*, TAppointment*), int(*swp)(TAppointment *, TAppointment *))
 {
    int idx; // Schranke einer Zerlegung
    if (ui >= oi)
@@ -47,7 +46,7 @@ void qsortt(TAppointment *A, int ui, int oi, int(*compare)(TAppointment*, TAppoi
    }
 }
 
-void Quicksort(TAppointment *A, int num, int(*compare)(TAppointment*, TAppointment*), int(*swp)(TAppointment *, TAppointment *))
+void Quicksort (TAppointment *A, int num, int(*compare)(TAppointment*, TAppointment*), int(*swp)(TAppointment *, TAppointment *))
 {
    qsortt(A, 0, num - 1, compare, swp);
 }

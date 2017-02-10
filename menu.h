@@ -5,8 +5,8 @@ menu
 #ifndef MENU_H
    #define MENU_H MENU_H
 
-int getMenu(char *, char *[], int);
-void getSubMenu(char */*, char *, int i*/);
+int printMenu(char *, char *[], int);
+void printSubMenu(char */*, char *, int i*/);
 
 
 #endif

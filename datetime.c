@@ -55,7 +55,7 @@ void getDate (char prompt[], TDate *d)
    while (!isDate);
 }
 
-/* Benutzereingabe einer Uhrzeit (auch ohne Sekunden) und Umwandlung in ein TTime (Funtionalität aus der main.c von Uebung1)
+/* Benutzereingabe einer Uhrzeit und Umwandlung in ein TTime (Funtionalität aus der main.c von Uebung1)
    Es muss zusätzlich Speicher für die Termindauer reserviert werden
 */
 void getTime (char prompt[], TTime *time)
@@ -95,12 +95,12 @@ void getTime (char prompt[], TTime *time)
          printf ("Sie haben nichts eingegeben!");
          RESTORE_POS;
       }
-   } while (!isTime);
+   }
+   while (!isTime);
 }
 
 void getDuration (char prompt[], TTime *time)
 {
-//   int isTime = 0;
    char Input[12];
    time -> Hour = 0;
    time -> Minute = 0;
@@ -118,7 +118,7 @@ void getDuration (char prompt[], TTime *time)
 
 int isLeapYear (int year)
 {
-   if ( ( (year % 4 == 0) && (year % 100 != 0) ) || (year % 400 == 0) )
+   if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0))
       return 1;
    else
       return 0;
@@ -131,36 +131,33 @@ int isDateValid (TDate date)
    {
       switch (date.Month)
       {
-      case 1:
-      case 3:
-      case 5:
-      case 7:
-      case 8:
-      case 10:
-      case 12:
-         isvalid = 1;
-         break;
-
-      case 4:
-      case 6:
-      case 9:
-      case 11:
-         isvalid = date.Day <= 30 ?  1 : 0;
-         break;
-
-      case 2:
-         if (isLeapYear (date.Year) )
-         {
-            isvalid = date.Day <= 29 ? 1 : 0;
+         case 1:
+         case 3:
+         case 5:
+         case 7:
+         case 8:
+         case 10:
+         case 12: isvalid = 1;
             break;
-         }
-         else
-         {
-            isvalid = date.Day <= 28 ? 1 : 0;
+
+         case 4:
+         case 6:
+         case 9:
+         case 11: isvalid = date.Day <= 30 ?  1 : 0;
             break;
-         }
-      default:
-         printf ("hä?");
+
+         case 2:
+            if (isLeapYear (date.Year) )
+            {
+               isvalid = date.Day <= 29 ? 1 : 0;
+               break;
+            }
+            else
+            {
+               isvalid = date.Day <= 28 ? 1 : 0;
+               break;
+            }
+         default: printf ("what have you done to get here? This case should never occur. -> check isDateValid");
       }
    }
    return isvalid;
@@ -232,7 +229,7 @@ TTime addTime(TAppointment *App)
    if (end.Minute > 59)
    {
       end.Minute -= 60;
-      end.Hour +=1;
+      end.Hour += 1;
    }
    if (end.Hour > 23)
    {

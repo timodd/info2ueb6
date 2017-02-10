@@ -35,7 +35,6 @@ Funktionen:
    swp(int *,int*)
 */
 
-//int countAppointments = 0;
 const int maxlen_description = 100, maxlen_place = 15;
 
 TAppointment *First = NULL;
@@ -55,7 +54,7 @@ void createAppointment()
                         "Ort          : ",
                         "Dauer        : "
                      };
-   getSubMenu(title);
+   printSubMenu(title);
 
    POSITION(4, 0);
    getDate(points[0], &App->Date);
@@ -101,7 +100,7 @@ void deleteAppointment()
    TAppointment *tmp = First;
    int c = -1, l = 0, i;
    char *title = "Termin löschen";
-   getSubMenu(title);
+   printSubMenu(title);
    l = printDelList();
    printf("\nWelchen Termin möchten Sie löschen (0 für Abbrechen) : ");
    STORE_POS;
@@ -135,6 +134,7 @@ void searchAppointment()
    waitForEnter();
 }
 
+/* */
 int printDelList()
 {
    int i = 0;
@@ -163,8 +163,6 @@ int printDelList()
    }
    return i;
 }
-
-
 
 /* **********************************************
 printAppointment gibt einen einzelnen Termin aus.
@@ -222,9 +220,9 @@ void printAppointment(TAppointment *App)
       printf(" | %s\n", App -> Description);
    else
    {
-      char tmp[44] = {' '};
-      strncpy(tmp, App->Description, 43);
-      printf(" | %s...\n", tmp);
+      char cut[43] = {' '};
+      strncpy(cut, App->Description, 42);
+      printf(" | %s...\n", cut);
    }
 }
 
@@ -233,7 +231,7 @@ void listCalendar()
    TAppointment *tmp = First;
    int n = 0;
    char *title = "Termine auflisten";
-   getSubMenu(title);
+   printSubMenu(title);
    while(tmp)
    {
       printAppointment(tmp);
@@ -253,6 +251,7 @@ void freeAppointment(TAppointment *App)
    free(App);
 }
 
+/* free all allocated memory of database*/
 void freeCalendar()
 {
    TAppointment *tmp = First;
@@ -294,6 +293,7 @@ int cmpDatTim(TAppointment *A1, TAppointment *A2)
       erg = cmpTim(A1, A2);
    return erg;
 }
+
 int cmpApp(TAppointment *A1, TAppointment *A2)
 {
    int erg = 0;

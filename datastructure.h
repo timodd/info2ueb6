@@ -1,6 +1,6 @@
 #ifndef DATASTRUCTURE_H
    #define DATASTRUCTURE_H DATASTRUCTURE_H
-   #define NUMPOINTS 9
+   #define NUMPOINTS 8
 
 
 typedef enum { NotADay = 0, Mo, Tu, We, Th, Fr, Sa, Su } TDayOfTheWeek;
@@ -18,7 +18,6 @@ typedef struct
 
 typedef struct sLE
 {
-//   int idx;
    TDate Date;
    TTime Time;
    char *Description;
@@ -28,7 +27,6 @@ typedef struct sLE
    struct sLE *prev;
 } TAppointment;
 
-extern int countAppointments;
 extern TAppointment *First, *Last;
 
 #endif
